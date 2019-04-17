@@ -1,17 +1,177 @@
 <!DOCTYPE html>
 
 <head>
+	<title>Backpacking Cost</title>
+		<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-135124652-1"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-135124652-1');
+	</script>
+	<meta name="viewport" content="width=device-width">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-	<script language="javascript" type="text/javascript" src="countries.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+	<script language="javascript" type="text/javascript" src="lib/rangeslider.min.js"></script>
+	<script language="javascript" type="text/javascript" src="lib/money.min.js"></script>
+	<script language="javascript" type="text/javascript" src="regions.js"></script>
+	<script language="javascript" type="text/javascript" src="exchange-rates.js"></script>
 	<script language="javascript" type="text/javascript" src="app.js"></script>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="checkbox.css">
+	<link rel="stylesheet" type="text/css" href="currency-dropdown.css">
+	<link rel="stylesheet" type="text/css" href="lib/rangeslider.css">
 </head>
 
 <body onload="onLoad()">
-	<table id="prices">
-		<tbody>
-		</tbody>
-	</table>
-</body>
+	<div class="grid-container">
 
+		<!-- Main title -->
+		<div id="mainTitle" class="grid-row">
+			<h1>See the cost of backpacking around the world based on how you like to travel</h1>
+		</div>
+
+		<div class="card">
+			<div id="controlsContainer" class="grid-container">
+
+				<h2 class="control-heading grid-row gentle">How often will you sleep in each of these places?</h2>
+
+				<!-- Accommodation -->
+				<div id="accommodationContainer" class="grid-row subcard">
+					<div id="free" class="shared-incrementer">
+						<h2 class="slider-left-label">Somewhere free <span class="percent">0%</span></h2>
+						<div class="increment-controls">
+							<button type="button" name="button" id="freeDecrementButton"onClick="decrement('free'); generatePricesTable()">-</button>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<button type="button" name="button" class="increment-button" onClick="increment('free'); generatePricesTable()">+</button>
+						</div>
+					</div>
+					<div id="dorms" class="shared-incrementer">
+						<h2 class="slider-left-label">Hostel Dorms <span class="percent">0%</span></h2>
+						<div class="increment-controls">
+							<button type="button" name="button" id="dormsDecrementButton"onClick="decrement('dorms'); generatePricesTable()">-</button>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<button type="button" name="button" class="increment-button" onClick="increment('dorms'); generatePricesTable()">+</button>
+						</div>
+					</div>
+					<div id="privates" class="shared-incrementer">
+						<h2 class="slider-left-label">Hostel Privates <span class="percent">0%</span></h2>
+						<div class="increment-controls">
+							<button type="button" name="button" id="privatesDecrementButton"onClick="decrement('privates'); generatePricesTable()">-</button>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<div class="increment-bar"></div>
+							<button type="button" name="button" class="increment-button" onClick="increment('privates'); generatePricesTable()">+</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Food -->
+				<h2 class="control-heading grid-row gentle">How often will you eat street food vs in restaurants?</h2>
+				<div class="grid-row horizontal-slider-container two-tone">
+					<h2 class="slider-left-label">Street Food <span id="streetFoodPercent"class="percent">50%</span></h2>
+					<h2 class="slider-right-label"><span id="restaurantsPercent"class="percent-blue">50%</span> Restaurants</h2>
+					<input
+							id="foodSlider"
+							type="range"
+							min="0"
+							max="1"
+							step=".1"
+							value=".5"
+							data-orientation="horizontal"
+							onChange="handleSliderChange(this)"
+							onInput="handleSliderChange(this)"
+					>
+				</div>
+
+				<!-- Beer -->
+				<div class="grid-row horizontal-slider-container">
+					<h2 class="slider-left-label">Daily beers: <span id="beerCount" class="percent">2</span></h2>
+					<input
+							id="beerSlider"
+							type="range"
+							min="0"
+							max="20"
+							step="1"
+							value="2"
+							data-orientation="horizontal"
+							onChange="handleSliderChange(this)"
+							onInput="handleSliderChange(this)"
+					>
+				</div>
+
+				<!-- Transit rides -->
+				<div class="grid-row horizontal-slider-container">
+					<h2 class="slider-left-label">Daily rides on local transit: <span id="transitCount" class="percent">2</span></h2>
+					<input
+							id="transitSlider"
+							type="range"
+							min="0"
+							max="10"
+							step="1"
+							value="2"
+							data-orientation="horizontal"
+							onChange="handleSliderChange(this)"
+							onInput="handleSliderChange(this)"
+					>
+				</div>
+
+				<!-- Travel Insurance checkbox -->
+				<label class="checkbox-container grid-row">
+				  <input id="insuranceCheckbox" type="checkbox" checked="checked" onclick="handleCheckboxClick(this)">
+				  <span class="checkmark"></span>
+					<span class="checkbox-label">Travel Insurance</span>
+				</label>
+
+				<!-- Local Sim Card checkbox -->
+				<label class="checkbox-container grid-row">
+					<input id="simCardCheckbox" type="checkbox" checked="checked" onclick="handleCheckboxClick(this)">
+					<span class="checkmark"></span>
+					<span class="checkbox-label">Local Sim Card</span>
+				</label>
+
+			</div>
+		</div>
+
+		<div class="card">
+			<div id="resultsContainer">
+				<h1 id="resultsTitle">Estimated Cost For <input id="dayCount" type="number" name="days" value="1" min="1" max="999" pattern="[0-9]*" inputmode="numeric" onchange="handleDayCountChange(this)"><span id="dayText"> Day</span></h1>
+				<ul id="regionSelectors">
+					<li class="active" onclick="handleRegionClick('north america')">North America</li>
+					<li class="active" onclick="handleRegionClick('south america')">South America</li>
+					<li class="active" onclick="handleRegionClick('western europe')">Western Europe</li>
+					<li class="active" onclick="handleRegionClick('eastern europe')">Eastern Europe</li>
+					<li class="active" onclick="handleRegionClick('africa')">Africa</li>
+					<li class="active" onclick="handleRegionClick('asia')">Asia</li>
+					<li class="active" onclick="handleRegionClick('east asia')">East Asia</li>
+					<li class="active" onclick="handleRegionClick('oceania')">Oceania</li>
+				</ul>
+				<div class="select-container">
+					<select id="currencySelector" onchange="setCurrency(this)" name="currency"></select>
+				</div>
+				<h2 id="unallocatedWarning">Don't forget: you haven't finished specifying where you will sleep!</h2>
+					<table id="priceTable">
+						<tbody>
+						</tbody>
+					</table>
+				<div id="feedback">
+					Do you have a way to improve the site? <a href="https://docs.google.com/document/d/157rCMAcHZG1EmX4e2CPitMWmJ3CIBtYX6_ImMupu7Sg/edit?usp=sharing" target="_blank">Leave a note!</a>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</body>
 </html>
